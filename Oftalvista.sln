@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Services", "02 Services", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Oftalvista", "Oftalvista", "{97735E9C-B2B2-444F-8D7C-5879E3957736}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Api", "02 Services\Oftalvista\Oftalvista.Api\Oftalvista.Api.csproj", "{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Domain", "02 Services\Oftalvista\Oftalvista.Domain\Oftalvista.Domain.csproj", "{9DCB2585-1587-4018-8324-A4579461F2BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Infrastructure", "02 Services\Oftalvista\Oftalvista.Infrastructure\Oftalvista.Infrastructure.csproj", "{4351FE96-F995-4997-9A85-CC8999B6C401}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DCB2585-1587-4018-8324-A4579461F2BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DCB2585-1587-4018-8324-A4579461F2BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DCB2585-1587-4018-8324-A4579461F2BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DCB2585-1587-4018-8324-A4579461F2BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4351FE96-F995-4997-9A85-CC8999B6C401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4351FE96-F995-4997-9A85-CC8999B6C401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4351FE96-F995-4997-9A85-CC8999B6C401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4351FE96-F995-4997-9A85-CC8999B6C401}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{97735E9C-B2B2-444F-8D7C-5879E3957736} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
+		{9DCB2585-1587-4018-8324-A4579461F2BE} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
+		{4351FE96-F995-4997-9A85-CC8999B6C401} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B47D4D55-4421-4BFC-986B-6C88157BA76D}
+	EndGlobalSection
+EndGlobal
