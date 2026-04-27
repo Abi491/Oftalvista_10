@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\UPC\\Oftalvista\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj": {}
+    "D:\\UPC\\Oftalvista_10\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj": {}
   },
   "projects": {
-    "D:\\UPC\\Oftalvista\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj": {
+    "D:\\UPC\\Oftalvista_10\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\UPC\\Oftalvista\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj",
+        "projectUniqueName": "D:\\UPC\\Oftalvista_10\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj",
         "projectName": "Oftalvista.Domain",
-        "projectPath": "D:\\UPC\\Oftalvista\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj",
+        "projectPath": "D:\\UPC\\Oftalvista_10\\02 Services\\Oftalvista\\Oftalvista.Domain\\Oftalvista.Domain.csproj",
         "packagesPath": "C:\\Users\\usitd05\\.nuget\\packages\\",
-        "outputPath": "D:\\UPC\\Oftalvista\\02 Services\\Oftalvista\\Oftalvista.Domain\\obj\\",
+        "outputPath": "D:\\UPC\\Oftalvista_10\\02 Services\\Oftalvista\\Oftalvista.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -51,6 +51,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[14.1.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

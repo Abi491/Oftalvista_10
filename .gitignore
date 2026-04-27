@@ -1,0 +1,64 @@
+# =========================
+# VISUAL STUDIO / .NET
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+out/
+publish/
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Test results
+TestResults/
+coverage/
+
+# =========================
+# ANGULAR / NODE
+# =========================
+node_modules/
+dist/
+dist-ssr/
+.angular/
+coverage/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# npm / yarn logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# =========================
+# ANGULAR / FRONT CACHE
+# =========================
+.cache/
+.temp/
+
+# =========================
+# IDE / EDITORS
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Oftalvista.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+629115fb0962b5963ddcf37a7db65203e66b9ff9")]
 [assembly: System.Reflection.AssemblyProductAttribute("Oftalvista.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Oftalvista.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
