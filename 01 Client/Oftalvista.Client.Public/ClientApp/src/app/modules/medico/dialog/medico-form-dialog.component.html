@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>{{ esEdicion ? "Editar" : "Nuevo" }} Médico</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid" style="margin-top:8px">
+    <mat-form-field appearance="outline">
+      <mat-label>ID Usuario</mat-label>
+      <input matInput type="number" formControlName="idUsuario">
+      <mat-hint>Ingrese el ID de un usuario tipo Médico</mat-hint>
+      <mat-error>Obligatorio</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Especialidad</mat-label>
+      <mat-select formControlName="idEspecialidadMedica">
+        <mat-option *ngFor="let e of data.especialidades" [value]="e.value">{{ e.text }}</mat-option>
+      </mat-select>
+      <mat-error>Obligatorio</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-col">
+      <mat-label>CMP</mat-label>
+      <input matInput formControlName="cmp">
+      <mat-error>Obligatorio</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-col">
+      <mat-label>Perfil Profesional</mat-label>
+      <textarea matInput formControlName="perfilProfesional" rows="3"></textarea>
+      <mat-error>Obligatorio</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="ref.close(false)" [disabled]="loading">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="guardar()" [disabled]="loading">
+    <mat-spinner *ngIf="loading" diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    {{ loading ? "Guardando..." : "Guardar" }}
+  </button>
+</mat-dialog-actions>

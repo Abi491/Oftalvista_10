@@ -1,0 +1,24 @@
+@use "@angular/material" as mat;
+@include mat.core();
+
+$primary: mat.define-palette(mat.$indigo-palette);
+$accent:  mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$warn:    mat.define-palette(mat.$red-palette);
+$theme:   mat.define-light-theme((color:(primary:$primary,accent:$accent,warn:$warn)));
+@include mat.all-component-themes($theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #f4f6f8; }
+
+.page-container { padding: 24px; max-width: 1400px; margin: 0 auto; }
+.action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+.filter-row mat-form-field { flex: 1; min-width: 160px; }
+.full-width { width: 100%; }
+.spacer { flex: 1 1 auto; }
+.mat-elevation-z2 { width: 100%; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.form-grid .full-col { grid-column: span 2; }
+.chip-activo   { background: #e8f5e9 !important; color: #2e7d32 !important; font-weight: 500; }
+.chip-inactivo { background: #fce4ec !important; color: #c62828 !important; font-weight: 500; }

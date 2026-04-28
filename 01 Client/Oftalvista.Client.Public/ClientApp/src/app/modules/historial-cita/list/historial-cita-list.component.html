@@ -1,0 +1,53 @@
+<div class="page-container">
+  <div class="action-bar">
+    <h2>Historial de Citas</h2>
+    <span style="color:#666;font-size:13px"><mat-icon style="vertical-align:middle;font-size:16px">info</mat-icon> Solo lectura</span>
+  </div>
+  <mat-card style="margin-bottom:16px;padding:16px">
+    <div class="filter-row" [formGroup]="filtros">
+      <mat-form-field appearance="outline"><mat-label>ID Cita</mat-label><input matInput formControlName="idCita"></mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Estado Cita</mat-label>
+        <mat-select formControlName="idEstadoCita">
+          <mat-option value="">Todos</mat-option>
+          <mat-option *ngFor="let e of estadosCita" [value]="e.value">{{ e.text }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Desde</mat-label><input matInput type="date" formControlName="fechaRegistroDesde"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Hasta</mat-label><input matInput type="date" formControlName="fechaRegistroHasta"></mat-form-field>
+      <button mat-flat-button color="primary" (click)="buscar()"><mat-icon>search</mat-icon> Buscar</button>
+      <button mat-stroked-button (click)="limpiar()"><mat-icon>clear</mat-icon> Limpiar</button>
+    </div>
+  </mat-card>
+  <div style="position:relative">
+    <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="40"
+      style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10"></mat-progress-spinner>
+    <table mat-table [dataSource]="data" class="mat-elevation-z2">
+      <ng-container matColumnDef="rowNum"><th mat-header-cell *matHeaderCellDef>#</th><td mat-cell *matCellDef="let r">{{r.rowNum}}</td></ng-container>
+      <ng-container matColumnDef="idCita"><th mat-header-cell *matHeaderCellDef>ID Cita</th><td mat-cell *matCellDef="let r">{{r.idCita}}</td></ng-container>
+      <ng-container matColumnDef="idEstadoCita">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let r">
+          <span style="padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500"
+            [style.background]="r.idEstadoCita===2?'#e8f5e9':r.idEstadoCita===3?'#fce4ec':'#fff9c4'"
+            [style.color]="r.idEstadoCita===2?'#2e7d32':r.idEstadoCita===3?'#c62828':'#f57f17'">
+            {{getEstado(r.idEstadoCita)}}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="descripcion"><th mat-header-cell *matHeaderCellDef>Descripción</th><td mat-cell *matCellDef="let r">{{r.descripcion}}</td></ng-container>
+      <ng-container matColumnDef="fechaEvento"><th mat-header-cell *matHeaderCellDef>Fecha Evento</th><td mat-cell *matCellDef="let r">{{r.fechaEvento}}</td></ng-container>
+      <ng-container matColumnDef="idTblEstadoVigencia">
+        <th mat-header-cell *matHeaderCellDef>Vigencia</th>
+        <td mat-cell *matCellDef="let r">
+          <span [class]="r.idTblEstadoVigencia===1?'chip-activo':'chip-inactivo'" style="padding:4px 10px;border-radius:12px;font-size:12px">
+            {{r.idTblEstadoVigencia===1?"Activo":"Inactivo"}}
+          </span>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+    <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="[5,10,25,50]" (page)="onPage($event)" #paginator></mat-paginator>
+  </div>
+</div>

@@ -1,59 +1,65 @@
-# ClientApp
+# Oftalvista App — Frontend Angular 17
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+## Requisitos
+- Node.js >= 18
+- Angular CLI >= 17: `npm install -g @angular/cli`
 
-## Development server
+## Instalación
+```bash
+npm install
+```
 
-To start a local development server, run:
-
+## Ejecución local
 ```bash
 ng serve
 ```
+Acceder en: http://localhost:4200
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+## Configuración del backend
+Editar `src/environments/environment.ts`:
+```ts
+export const environment = {
+  production: false,
+  apiUrl: "http://localhost:5000/api/v1"
+};
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
+## Estructura de módulos
+```
+src/app/
+├── core/
+│   ├── models/          → DTOs tipados (AgendaMedica, Cita, Medico, etc.)
+│   ├── services/        → Servicios HTTP por entidad + AuthService + CatalogoService
+│   ├── guards/          → authGuard, roleGuard
+│   └── interceptors/    → jwtInterceptor, errorInterceptor
+├── shared/
+│   ├── material.module.ts
+│   └── components/confirm-dialog/
+├── layout/shell/        → Sidenav + Topbar
+└── modules/
+    ├── auth/login/
+    ├── dashboard/admin | paciente/
+    ├── especialidad-medica/   list/ + dialog/
+    ├── usuario/               list/ + dialog/
+    ├── medico/                list/ + dialog/
+    ├── paciente/              list/ + dialog/
+    ├── agenda-medica/         list/ + dialog/
+    ├── cita/                  list/ + dialog/ (form + detalle)
+    ├── pago-cita/             list/ + dialog/
+    ├── historial-cita/        list/ (solo lectura)
+    └── recordatorio-cita/     list/ + dialog/
 ```
 
-## Building
+## Roles
+| Rol | idTipoUsuario | Acceso |
+|-----|--------------|--------|
+| Administrador | 1 | Todo el sistema |
+| Paciente | 2 | Citas, Pagos, Historial propios |
+| Médico | 3 | Dashboard paciente |
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Tecnologías
+- Angular 17 (standalone components)
+- Angular Material 17
+- Reactive Forms
+- JWT via localStorage
+- HttpClient con interceptores funcionales
