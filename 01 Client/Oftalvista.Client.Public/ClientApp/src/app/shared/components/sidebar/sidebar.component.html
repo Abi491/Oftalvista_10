@@ -1,0 +1,53 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo"><mat-icon style="color: #fff; font-size: 22px">visibility</mat-icon></div>
+    <div>
+      <div style="font-weight: 800; font-size: 20px">Oftalvista</div>
+      <div style="opacity: 0.6; font-size: 11px">Plataforma clinica</div>
+    </div>
+  </div>
+  <div class="nav-group-label">Principal</div>
+  <a class="nav-item" routerLink="/dashboard/admin" routerLinkActive="active" *ngIf="auth.isAdmin()"
+    ><mat-icon>dashboard</mat-icon> Dashboard Admin</a
+  >
+  <a class="nav-item" routerLink="/dashboard/paciente" routerLinkActive="active"
+    ><mat-icon>person_outline</mat-icon> Mi Panel</a
+  >
+  <ng-container *ngIf="auth.isAdmin()">
+    <div class="nav-group-label">Mantenimiento</div>
+    <a class="nav-item" routerLink="/mantenimiento/especialidades" routerLinkActive="active"
+      ><mat-icon>local_hospital</mat-icon> Especialidades</a
+    >
+    <a class="nav-item" routerLink="/mantenimiento/usuarios" routerLinkActive="active"
+      ><mat-icon>badge</mat-icon> Usuarios</a
+    >
+    <a class="nav-item" routerLink="/mantenimiento/medicos" routerLinkActive="active"
+      ><mat-icon>medical_services</mat-icon> Medicos</a
+    >
+    <a class="nav-item" routerLink="/mantenimiento/pacientes" routerLinkActive="active"
+      ><mat-icon>people</mat-icon> Pacientes</a
+    >
+    <a class="nav-item" routerLink="/mantenimiento/agenda-medica" routerLinkActive="active"
+      ><mat-icon>calendar_month</mat-icon> Agenda Medica</a
+    >
+  </ng-container>
+  <div class="nav-group-label">Operaciones</div>
+  <a class="nav-item" routerLink="/operaciones/citas" routerLinkActive="active"
+    ><mat-icon>event</mat-icon> Citas</a
+  >
+  <a
+    class="nav-item"
+    routerLink="/operaciones/pagos"
+    routerLinkActive="active"
+    *ngIf="auth.isAdmin()"
+    ><mat-icon>payments</mat-icon> Pagos</a
+  >
+  <a class="nav-item" routerLink="/operaciones/historial" routerLinkActive="active"
+    ><mat-icon>history</mat-icon> Historial Cita</a
+  >
+  <a class="nav-item" routerLink="/operaciones/recordatorios" routerLinkActive="active"
+    ><mat-icon>notifications</mat-icon> Recordatorios</a
+  >
+  <div class="spacer"></div>
+  <div class="nav-item" (click)="auth.logout()"><mat-icon>logout</mat-icon> Cerrar sesion</div>
+</aside>

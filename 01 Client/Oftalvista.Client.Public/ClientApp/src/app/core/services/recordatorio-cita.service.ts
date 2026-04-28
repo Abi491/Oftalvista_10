@@ -1,40 +1,41 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { PaginatedRequest, PaginatedResponse } from "../models/paginated.model";
-import { RecordatorioCitaRequest, RecordatorioCitaItemsDto, RecordatorioCitaFilter } from "../models/recordatorio-cita.model";
-
-@Injectable({ providedIn: "root" })
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { paginatedItemsResponse } from '../models/pagination.model';
+import {
+  recordatorioCitaItemsDto,
+  createRecordatorioCitaRequest,
+  updateRecordatorioCitaRequest,
+  recordatorioCitaListRequest,
+} from '../models/recordatorio-cita.model';
+@Injectable({ providedIn: 'root' })
 export class RecordatorioCitaService {
-  private http = inject(HttpClient);
-  private url  = `${environment.apiUrl}/recordatorio-cita`;
-
-  listar(request: PaginatedRequest<RecordatorioCitaFilter>): Observable<PaginatedResponse<RecordatorioCitaItemsDto>> {
-    let params = new HttpParams()
-      .set("pageSize",   request.pageSize)
-      .set("skip",       request.skip)
-      .set("sortField",  request.sortField)
-      .set("sortDir",    request.sortDir);
-    if (request.filter) {
-      Object.entries(request.filter).forEach(([k, v]) => { if (v) params = params.set(k, v as string); });
-    }
-    return this.http.get<PaginatedResponse<RecordatorioCitaItemsDto>>(this.url, { params });
+  private url = `${environment.apiUrl}/recordatorio-cita`;
+  constructor(private http: HttpClient) {}
+  listar(
+    req: recordatorioCitaListRequest,
+  ): Observable<paginatedItemsResponse<recordatorioCitaItemsDto>> {
+    let p = new HttpParams().set('pageSize', req.pageSize).set('skip', req.skip);
+    if (req.sortField) p = p.set('sortField', req.sortField);
+    if (req.sortDir) p = p.set('sortDir', req.sortDir);
+    if (req.filter)
+      Object.keys(req.filter).forEach((k) => {
+        const v = (req.filter as any)[k];
+        if (v != null && v !== '') p = p.set(k, v);
+      });
+    return this.http.get<paginatedItemsResponse<recordatorioCitaItemsDto>>(this.url, { params: p });
   }
-
-  getById(guid: string): Observable<RecordatorioCitaItemsDto> {
-    return this.http.get<RecordatorioCitaItemsDto>(`${this.url}/${guid}`);
+  obtener(guid: string): Observable<recordatorioCitaItemsDto> {
+    return this.http.get<recordatorioCitaItemsDto>(`${this.url}/${guid}`);
   }
-
-  crear(payload: RecordatorioCitaRequest): Observable<any> {
-    return this.http.post(this.url, payload);
+  crear(body: createRecordatorioCitaRequest): Observable<recordatorioCitaItemsDto> {
+    return this.http.post<recordatorioCitaItemsDto>(this.url, body);
   }
-
-  editar(payload: RecordatorioCitaRequest): Observable<any> {
-    return this.http.put(this.url, payload);
+  editar(guid: string, body: updateRecordatorioCitaRequest): Observable<recordatorioCitaItemsDto> {
+    return this.http.put<recordatorioCitaItemsDto>(`${this.url}/${guid}`, body);
   }
-
-  eliminar(guid: string): Observable<any> {
-    return this.http.delete(`${this.url}/${guid}`);
+  eliminar(guid: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${guid}`);
   }
 }

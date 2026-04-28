@@ -1,41 +1,39 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
-import { tap } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { LoginRequest, LoginResponse } from "../models/auth.model";
-
-const KEY_TOKEN = "oftalvista_token";
-const KEY_USER  = "oftalvista_user";
-
-@Injectable({ providedIn: "root" })
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { loginRequest, loginResponse } from '../models/auth.model';
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http   = inject(HttpClient);
-  private router = inject(Router);
-  private base   = environment.apiUrl;
-
-  login(payload: LoginRequest) {
-    return this.http.post<LoginResponse>(`${this.base}/auth/login`, payload).pipe(
-      tap(res => {
-        localStorage.setItem(KEY_TOKEN, res.token);
-        localStorage.setItem(KEY_USER, JSON.stringify(res));
-      })
+  private url = `${environment.apiUrl}/auth`;
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
+  login(body: loginRequest): Observable<loginResponse> {
+    return this.http.post<loginResponse>(`${this.url}/login`, body).pipe(
+      tap((r) => {
+        localStorage.setItem('ov_token', r.token);
+        localStorage.setItem('ov_user', JSON.stringify(r));
+      }),
     );
   }
-
-  logout() {
-    localStorage.removeItem(KEY_TOKEN);
-    localStorage.removeItem(KEY_USER);
-    this.router.navigate(["/login"]);
+  logout(): void {
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
-
-  getToken(): string | null { return localStorage.getItem(KEY_TOKEN); }
-
-  getUser(): LoginResponse | null {
-    const u = localStorage.getItem(KEY_USER);
+  getToken(): string | null {
+    return localStorage.getItem('ov_token');
+  }
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+  getUser(): loginResponse | null {
+    const u = localStorage.getItem('ov_user');
     return u ? JSON.parse(u) : null;
   }
-
-  getRol(): number { return this.getUser()?.idTipoUsuario ?? 0; }
-  isLoggedIn(): boolean { return !!this.getToken(); }
+  isAdmin(): boolean {
+    return this.getUser()?.idTipoUsuario === 1;
+  }
 }

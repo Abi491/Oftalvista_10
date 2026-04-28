@@ -1,87 +1,139 @@
-import { Component, inject, OnInit, ViewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatPaginator } from "@angular/material/paginator";
-import { MaterialModule } from "../../../shared/material.module";
-import { CitaService } from "../../../core/services/cita.service";
-import { MedicoService } from "../../../core/services/medico.service";
-import { PacienteService } from "../../../core/services/paciente.service";
-import { CitaItemsDto, CitaFilter } from "../../../core/models/cita.model";
-import { PaginatedRequest, CatalogoItem } from "../../../core/models/paginated.model";
-import { CatalogoService } from "../../../core/services/catalogo.service";
-import { ConfirmDialogComponent } from "../../../shared/components/confirm-dialog/confirm-dialog.component";
-import { CitaFormDialogComponent } from "../dialog/cita-form-dialog.component";
-import { CitaDetalleDialogComponent } from "../dialog/cita-detalle-dialog.component";
-
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../shared/material.module';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../shared/components/topbar/topbar.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CatalogoService } from '../../../core/services/catalogo.service';
+import { CitaService } from '../../../core/services/cita.service';
+import { catalogoItem } from '../../../core/models/catalogo.model';
+import { citaItemsDto, citaListRequest } from '../../../core/models/cita.model';
+import { CitaFormComponent } from '../dialogs/form/cita-form.component';
+import { CitaDetalleComponent } from '../dialogs/detalle/cita-detalle.component';
 @Component({
-  selector: "app-cita-list",
+  selector: 'app-cita-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
-  templateUrl: "./cita-list.component.html"
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    RouterModule,
+    SidebarComponent,
+    TopbarComponent,
+  ],
+  templateUrl: './cita-list.component.html',
 })
 export class CitaListComponent implements OnInit {
-  private svc        = inject(CitaService);
-  private medSvc     = inject(MedicoService);
-  private pacSvc     = inject(PacienteService);
-  private dialog     = inject(MatDialog);
-  private snack      = inject(MatSnackBar);
-  private fb         = inject(FormBuilder);
-  catalogoSvc        = inject(CatalogoService);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  columns = ["rowNum","idPaciente","idMedico","fechaCita","horaCita","idModalidadCita","idEstadoCita","idTblEstadoVigencia","acciones"];
-  data: CitaItemsDto[] = [];
-  total = 0; pageSize = 10; loading = false;
-  medicos: CatalogoItem[]   = [];
-  pacientes: CatalogoItem[] = [];
-  estadosCita = this.catalogoSvc.getEstadoCita();
-  modalidades = this.catalogoSvc.getModalidadCita();
-
-  filtros = this.fb.group({ idPaciente:[""], idMedico:[""], fechaRegistroDesde:[""], fechaRegistroHasta:[""] });
-
-  ngOnInit() {
-    this.medSvc.listar({ pageSize:100, skip:0, sortField:"idMedico", sortDir:"asc", filter:{} as any })
-      .subscribe(res => { this.medicos = res.data.map(m => ({ value:m.idMedico, text:`CMP:${m.cmp}` })); });
-    this.pacSvc.listar({ pageSize:100, skip:0, sortField:"idPaciente", sortDir:"asc", filter:{} as any })
-      .subscribe(res => { this.pacientes = res.data.map(p => ({ value:p.idPaciente, text:`ID:${p.idUsuario}` })); });
+  cols = ['rowNum', 'fechaCita', 'horaCita', 'motivo', 'idTblEstadoVigencia', 'acciones'];
+  data: citaItemsDto[] = [];
+  total = 0;
+  loading = false;
+  pageSize = 10;
+  pacientes: catalogoItem[] = [];
+  medicos: catalogoItem[] = [];
+  estadosCita: catalogoItem[] = [];
+  modalidades: catalogoItem[] = [];
+  estadosVigencia: catalogoItem[] = [];
+  filtros!: FormGroup;
+  constructor(
+    private svc: CitaService,
+    private dialog: MatDialog,
+    private snack: MatSnackBar,
+    private fb: FormBuilder,
+    private cat: CatalogoService,
+  ) {}
+  ngOnInit(): void {
+    this.cat.getPacientes().subscribe((r) => (this.pacientes = r));
+    this.cat.getMedicos().subscribe((r) => (this.medicos = r));
+    this.cat.getEstadosCita().subscribe((r) => (this.estadosCita = r));
+    this.cat.getModalidadesCita().subscribe((r) => (this.modalidades = r));
+    this.cat.getEstadosVigencia().subscribe((r) => (this.estadosVigencia = r));
+    this.filtros = this.fb.group({ fechaRegistroDesde: [''], fechaRegistroHasta: [''] });
     this.cargar();
   }
-
-  cargar(skip = 0) {
+  cargar(skip = 0): void {
     this.loading = true;
-    this.svc.listar({ pageSize:this.pageSize, skip, sortField:"fechaCita", sortDir:"desc", filter:this.filtros.value as CitaFilter }).subscribe({
-      next: res => { this.data=res.data; this.total=res.count; this.loading=false; },
-      error: () => { this.loading=false; }
-    });
+    this.svc
+      .listar({
+        pageSize: this.pageSize,
+        skip,
+        sortField: 'Id',
+        sortDir: 'asc',
+        filter: this.filtros.value as any,
+      })
+      .subscribe({
+        next: (r) => {
+          this.data = r.data;
+          this.total = r.count;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
-
-  buscar() { this.paginator?.firstPage(); this.cargar(); }
-  limpiar() { this.filtros.reset(); this.buscar(); }
-  onPage(e: any) { this.pageSize=e.pageSize; this.cargar(e.pageIndex*e.pageSize); }
-
-  getEstado(id: number)    { return this.estadosCita.find(e => e.value===id)?.text ?? id; }
-  getModalidad(id: number) { return this.modalidades.find(m => m.value===id)?.text ?? id; }
-  getMedico(id: number)    { return this.medicos.find(m => m.value===id)?.text ?? `ID:${id}`; }
-  getPaciente(id: number)  { return this.pacientes.find(p => p.value===id)?.text ?? `ID:${id}`; }
-
-  abrirForm(item?: CitaItemsDto) {
-    const ref = this.dialog.open(CitaFormDialogComponent, {
-      width:"620px", data:{ item:item??null, medicos:this.medicos, pacientes:this.pacientes }, disableClose:true
-    });
-    ref.afterClosed().subscribe(ok => { if(ok) this.cargar(); });
+  buscar(): void {
+    if (this.paginator) this.paginator.firstPage();
+    this.cargar(0);
   }
-
-  verDetalle(item: CitaItemsDto) {
-    this.dialog.open(CitaDetalleDialogComponent, { width:"700px", data:item });
+  limpiar(): void {
+    this.filtros.reset();
+    this.buscar();
   }
-
-  eliminar(item: CitaItemsDto) {
-    const ref = this.dialog.open(ConfirmDialogComponent, { width:"380px", data:{title:"Eliminar Cita",message:`¿Eliminar cita del ${item.fechaCita}?`} });
-    ref.afterClosed().subscribe(ok => {
-      if(!ok) return;
-      this.svc.eliminar(item.idCita.toString()).subscribe(() => { this.snack.open("Eliminado","Cerrar",{duration:3000}); this.cargar(); });
-    });
+  onPage(e: any): void {
+    this.pageSize = e.pageSize;
+    this.cargar(e.pageIndex * e.pageSize);
+  }
+  nuevo(): void {
+    this.dialog
+      .open(CitaFormComponent, { width: '640px', data: null })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Creado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  editar(row: citaItemsDto): void {
+    this.dialog
+      .open(CitaFormComponent, { width: '640px', data: row })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Actualizado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  ver(row: citaItemsDto): void {
+    this.dialog.open(CitaDetalleComponent, { width: '580px', data: row });
+  }
+  eliminar(row: citaItemsDto): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        width: '420px',
+        data: { title: 'Eliminar registro', message: 'Esta accion no se puede deshacer.' },
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok)
+          this.svc.eliminar((row as any).guid ?? '').subscribe(() => {
+            this.snack.open('Eliminado', '', { duration: 3000 });
+            this.cargar();
+          });
+      });
+  }
+  labelEstado(id: number): string {
+    return id === 1 ? 'Activo' : 'Inactivo';
+  }
+  chipEstado(id: number): string {
+    return id === 1 ? 'chip chip-ok' : 'chip chip-off';
   }
 }

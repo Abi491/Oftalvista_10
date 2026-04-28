@@ -1,66 +1,138 @@
-import { Component, inject, OnInit, ViewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatPaginator } from "@angular/material/paginator";
-import { MaterialModule } from "../../../shared/material.module";
-import { RecordatorioCitaService } from "../../../core/services/recordatorio-cita.service";
-import { RecordatorioCitaItemsDto, RecordatorioCitaFilter } from "../../../core/models/recordatorio-cita.model";
-import { CatalogoService } from "../../../core/services/catalogo.service";
-import { ConfirmDialogComponent } from "../../../shared/components/confirm-dialog/confirm-dialog.component";
-import { RecordatorioCitaFormDialogComponent } from "../dialog/recordatorio-cita-form-dialog.component";
-
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../shared/material.module';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../shared/components/topbar/topbar.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CatalogoService } from '../../../core/services/catalogo.service';
+import { RecordatorioCitaService } from '../../../core/services/recordatorio-cita.service';
+import { catalogoItem } from '../../../core/models/catalogo.model';
+import {
+  recordatorioCitaItemsDto,
+  recordatorioCitaListRequest,
+} from '../../../core/models/recordatorio-cita.model';
+import { RecordatorioCitaFormComponent } from '../dialogs/form/recordatorio-cita-form.component';
+import { RecordatorioCitaDetalleComponent } from '../dialogs/detalle/recordatorio-cita-detalle.component';
 @Component({
-  selector: "app-recordatorio-cita-list",
+  selector: 'app-recordatorio-cita-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
-  templateUrl: "./recordatorio-cita-list.component.html"
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    RouterModule,
+    SidebarComponent,
+    TopbarComponent,
+  ],
+  templateUrl: './recordatorio-cita-list.component.html',
 })
 export class RecordatorioCitaListComponent implements OnInit {
-  private svc    = inject(RecordatorioCitaService);
-  private dialog = inject(MatDialog);
-  private snack  = inject(MatSnackBar);
-  private fb     = inject(FormBuilder);
-  catalogoSvc    = inject(CatalogoService);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  columns = ["rowNum","idCita","idEstadoRecordatorio","fechaProgramada","fechaEnvio","mensaje","idTblEstadoVigencia","acciones"];
-  data: RecordatorioCitaItemsDto[] = [];
-  total = 0; pageSize = 10; loading = false;
-  estadosRec = this.catalogoSvc.getEstadoRecordatorio();
-
-  filtros = this.fb.group({ idCita:[""], fechaRegistroDesde:[""], fechaRegistroHasta:[""] });
-
-  ngOnInit() { this.cargar(); }
-
-  cargar(skip = 0) {
+  cols = ['rowNum', 'fechaProgramada', 'fechaEnvio', 'idTblEstadoVigencia', 'acciones'];
+  data: recordatorioCitaItemsDto[] = [];
+  total = 0;
+  loading = false;
+  pageSize = 10;
+  citas: catalogoItem[] = [];
+  estadosRecordatorio: catalogoItem[] = [];
+  estadosVigencia: catalogoItem[] = [];
+  filtros!: FormGroup;
+  constructor(
+    private svc: RecordatorioCitaService,
+    private dialog: MatDialog,
+    private snack: MatSnackBar,
+    private fb: FormBuilder,
+    private cat: CatalogoService,
+  ) {}
+  ngOnInit(): void {
+    this.cat.getCitas().subscribe((r) => (this.citas = r));
+    this.cat.getEstadosRecordatorio().subscribe((r) => (this.estadosRecordatorio = r));
+    this.cat.getEstadosVigencia().subscribe((r) => (this.estadosVigencia = r));
+    this.filtros = this.fb.group({ fechaRegistroDesde: [''], fechaRegistroHasta: [''] });
+    this.cargar();
+  }
+  cargar(skip = 0): void {
     this.loading = true;
-    this.svc.listar({ pageSize:this.pageSize, skip, sortField:"fechaProgramada", sortDir:"desc",
-      filter:this.filtros.value as RecordatorioCitaFilter }).subscribe({
-      next: res => { this.data=res.data; this.total=res.count; this.loading=false; },
-      error: () => { this.loading=false; }
-    });
-  }
-
-  buscar() { this.paginator?.firstPage(); this.cargar(); }
-  limpiar() { this.filtros.reset(); this.buscar(); }
-  onPage(e: any) { this.pageSize=e.pageSize; this.cargar(e.pageIndex*e.pageSize); }
-  getEstado(id: number) { return this.estadosRec.find(e => e.value===id)?.text ?? id; }
-
-  abrirForm(item?: RecordatorioCitaItemsDto) {
-    const ref = this.dialog.open(RecordatorioCitaFormDialogComponent, { width:"560px", data:item??null, disableClose:true });
-    ref.afterClosed().subscribe(ok => { if(ok) this.cargar(); });
-  }
-
-  eliminar(item: RecordatorioCitaItemsDto) {
-    const ref = this.dialog.open(ConfirmDialogComponent, { width:"380px",
-      data:{ title:"Eliminar Recordatorio", message:`¿Eliminar recordatorio de cita ${item.idCita}?` } });
-    ref.afterClosed().subscribe(ok => {
-      if(!ok) return;
-      this.svc.eliminar(item.idRecordatorioCita.toString()).subscribe(() => {
-        this.snack.open("Eliminado","Cerrar",{duration:3000}); this.cargar();
+    this.svc
+      .listar({
+        pageSize: this.pageSize,
+        skip,
+        sortField: 'Id',
+        sortDir: 'asc',
+        filter: this.filtros.value as any,
+      })
+      .subscribe({
+        next: (r) => {
+          this.data = r.data;
+          this.total = r.count;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
       });
-    });
+  }
+  buscar(): void {
+    if (this.paginator) this.paginator.firstPage();
+    this.cargar(0);
+  }
+  limpiar(): void {
+    this.filtros.reset();
+    this.buscar();
+  }
+  onPage(e: any): void {
+    this.pageSize = e.pageSize;
+    this.cargar(e.pageIndex * e.pageSize);
+  }
+  nuevo(): void {
+    this.dialog
+      .open(RecordatorioCitaFormComponent, { width: '640px', data: null })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Creado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  editar(row: recordatorioCitaItemsDto): void {
+    this.dialog
+      .open(RecordatorioCitaFormComponent, { width: '640px', data: row })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Actualizado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  ver(row: recordatorioCitaItemsDto): void {
+    this.dialog.open(RecordatorioCitaDetalleComponent, { width: '580px', data: row });
+  }
+  eliminar(row: recordatorioCitaItemsDto): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        width: '420px',
+        data: { title: 'Eliminar registro', message: 'Esta accion no se puede deshacer.' },
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok)
+          this.svc.eliminar((row as any).guid ?? '').subscribe(() => {
+            this.snack.open('Eliminado', '', { duration: 3000 });
+            this.cargar();
+          });
+      });
+  }
+  labelEstado(id: number): string {
+    return id === 1 ? 'Activo' : 'Inactivo';
+  }
+  chipEstado(id: number): string {
+    return id === 1 ? 'chip chip-ok' : 'chip chip-off';
   }
 }

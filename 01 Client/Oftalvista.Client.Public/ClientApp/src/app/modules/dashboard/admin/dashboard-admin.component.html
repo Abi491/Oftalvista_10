@@ -1,11 +1,54 @@
-<div class="page-container">
-  <h2 style="margin-bottom:24px; color:#3f51b5">Panel de Administración</h2>
-  <div style="display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:16px">
-    <mat-card *ngFor="let a of accesos" (click)="ir(a.route)"
-      style="cursor:pointer; text-align:center; padding:24px; transition:box-shadow .2s"
-      [style.border-top]="'4px solid ' + a.color">
-      <mat-icon [style.color]="a.color" style="font-size:40px; width:40px; height:40px">{{ a.icon }}</mat-icon>
-      <p style="margin:12px 0 0; font-weight:500">{{ a.label }}</p>
-    </mat-card>
+<div class="premium-shell">
+  <app-sidebar></app-sidebar>
+  <div class="content-wrap">
+    <app-topbar
+      title="Dashboard Administrativo"
+      subtitle="Vista consolidada de indicadores clinicos"
+    ></app-topbar>
+    <div class="page-container">
+      <div class="hero">
+        <h2>Panel de Control — Oftalvista</h2>
+        <p>Indicadores en tiempo real, accesos rapidos y gestion centralizada.</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card" *ngFor="let k of kpis" [style.background]="k.bg">
+          <h3>{{ k.t }}</h3>
+          <div class="value">{{ k.v }}</div>
+          <div class="meta">
+            <mat-icon style="font-size: 13px; vertical-align: middle">{{ k.i }}</mat-icon> Indicador
+            del sistema
+          </div>
+        </div>
+      </div>
+      <mat-card class="table-card">
+        <div class="action-bar"><h2>Accesos rapidos</h2></div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+          "
+        >
+          <a mat-stroked-button routerLink="/mantenimiento/especialidades" style="height: 54px"
+            ><mat-icon>local_hospital</mat-icon> Especialidades</a
+          >
+          <a mat-stroked-button routerLink="/mantenimiento/usuarios" style="height: 54px"
+            ><mat-icon>badge</mat-icon> Usuarios</a
+          >
+          <a mat-stroked-button routerLink="/mantenimiento/medicos" style="height: 54px"
+            ><mat-icon>medical_services</mat-icon> Medicos</a
+          >
+          <a mat-stroked-button routerLink="/mantenimiento/pacientes" style="height: 54px"
+            ><mat-icon>people</mat-icon> Pacientes</a
+          >
+          <a mat-stroked-button routerLink="/operaciones/citas" style="height: 54px"
+            ><mat-icon>event</mat-icon> Citas</a
+          >
+          <a mat-stroked-button routerLink="/operaciones/pagos" style="height: 54px"
+            ><mat-icon>payments</mat-icon> Pagos</a
+          >
+        </div>
+      </mat-card>
+    </div>
   </div>
 </div>

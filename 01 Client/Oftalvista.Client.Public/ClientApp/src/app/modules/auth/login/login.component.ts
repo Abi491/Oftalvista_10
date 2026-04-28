@@ -1,38 +1,48 @@
-import { Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { MaterialModule } from "../../../shared/material.module";
-import { AuthService } from "../../../core/services/auth.service";
-
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MaterialModule } from '../../../shared/material.module';
+import { AuthService } from '../../../core/services/auth.service';
 @Component({
-  selector: "app-login",
+  selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MaterialModule],
-  templateUrl: "./login.component.html"
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  private fb     = inject(FormBuilder);
-  private auth   = inject(AuthService);
-  private router = inject(Router);
-  loading = false;
   hidePass = true;
-
-  form = this.fb.group({
-    correo:    ["", [Validators.required, Validators.email]],
-    claveHash: ["", Validators.required]
-  });
-
-  submit() {
+  loading = false;
+  form: FormGroup;
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+  ) {
+    this.form = this.fb.group({
+      correo: ['', [Validators.required, Validators.email]],
+      claveHash: ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
+  get correo() {
+    return this.form.get('correo');
+  }
+  get claveHash() {
+    return this.form.get('claveHash');
+  }
+  submit(): void {
+    this.form.markAllAsTouched();
     if (this.form.invalid) return;
     this.loading = true;
     this.auth.login(this.form.value as any).subscribe({
-      next: res => {
+      next: (r) => {
         this.loading = false;
-        const route = res.idTipoUsuario === 1 ? "/dashboard/admin" : "/dashboard/paciente";
-        this.router.navigate([route]);
+        this.router.navigate([r.idTipoUsuario === 1 ? '/dashboard/admin' : '/dashboard/paciente']);
       },
-      error: () => { this.loading = false; }
+      error: () => {
+        this.loading = false;
+      },
     });
   }
 }

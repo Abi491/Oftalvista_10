@@ -1,26 +1,35 @@
-import { Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
-import { MaterialModule } from "../../../shared/material.module";
-
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../shared/material.module';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../shared/components/topbar/topbar.component';
 @Component({
-  selector: "app-dashboard-admin",
+  selector: 'app-dashboard-admin',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
-  templateUrl: "./dashboard-admin.component.html"
+  imports: [CommonModule, RouterModule, MaterialModule, SidebarComponent, TopbarComponent],
+  templateUrl: './dashboard-admin.component.html',
 })
 export class DashboardAdminComponent {
-  router = inject(Router);
-  accesos = [
-    { label:"Especialidades",  icon:"local_hospital",   route:"/mantenimiento/especialidades",  color:"#3f51b5" },
-    { label:"Usuarios",        icon:"manage_accounts",  route:"/mantenimiento/usuarios",         color:"#7b1fa2" },
-    { label:"Médicos",         icon:"medical_services", route:"/mantenimiento/medicos",          color:"#0288d1" },
-    { label:"Pacientes",       icon:"people",           route:"/mantenimiento/pacientes",        color:"#00897b" },
-    { label:"Agenda Médica",   icon:"event",            route:"/mantenimiento/agenda-medica",    color:"#f57c00" },
-    { label:"Citas",           icon:"calendar_today",   route:"/operaciones/citas",              color:"#c0392b" },
-    { label:"Pagos",           icon:"payments",         route:"/operaciones/pagos",              color:"#27ae60" },
-    { label:"Historial Citas", icon:"history",          route:"/operaciones/historial-citas",    color:"#8e44ad" },
-    { label:"Recordatorios",   icon:"notifications",    route:"/operaciones/recordatorios",      color:"#d35400" }
+  kpis = [
+    { t: 'Citas del dia', v: '128', bg: 'linear-gradient(135deg,#1e3a8a,#2563eb)', i: 'event' },
+    {
+      t: 'Ingresos del dia',
+      v: 'S/ 4,860',
+      bg: 'linear-gradient(135deg,#0f766e,#06b6d4)',
+      i: 'payments',
+    },
+    {
+      t: 'Pacientes activos',
+      v: '1,245',
+      bg: 'linear-gradient(135deg,#7c3aed,#9333ea)',
+      i: 'people',
+    },
+    {
+      t: 'Medicos activos',
+      v: '18',
+      bg: 'linear-gradient(135deg,#b45309,#f59e0b)',
+      i: 'medical_services',
+    },
   ];
-  ir(route: string) { this.router.navigate([route]); }
 }

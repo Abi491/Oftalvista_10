@@ -1,68 +1,140 @@
-import { Component, inject, OnInit, ViewChild } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatPaginator } from "@angular/material/paginator";
-import { MaterialModule } from "../../../shared/material.module";
-import { AgendaMedicaService } from "../../../core/services/agenda-medica.service";
-import { MedicoService } from "../../../core/services/medico.service";
-import { AgendaMedicaItemsDto, AgendaMedicaFilter } from "../../../core/models/agenda-medica.model";
-import { PaginatedRequest, CatalogoItem } from "../../../core/models/paginated.model";
-import { ConfirmDialogComponent } from "../../../shared/components/confirm-dialog/confirm-dialog.component";
-import { AgendaMedicaFormDialogComponent } from "../dialog/agenda-medica-form-dialog.component";
-
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../shared/material.module';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { TopbarComponent } from '../../../shared/components/topbar/topbar.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CatalogoService } from '../../../core/services/catalogo.service';
+import { AgendaMedicaService } from '../../../core/services/agenda-medica.service';
+import { catalogoItem } from '../../../core/models/catalogo.model';
+import {
+  agendaMedicaItemsDto,
+  agendaMedicaListRequest,
+} from '../../../core/models/agenda-medica.model';
+import { AgendaMedicaFormComponent } from '../dialogs/form/agenda-medica-form.component';
+import { AgendaMedicaDetalleComponent } from '../dialogs/detalle/agenda-medica-detalle.component';
 @Component({
-  selector: "app-agenda-medica-list",
+  selector: 'app-agenda-medica-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
-  templateUrl: "./agenda-medica-list.component.html"
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    RouterModule,
+    SidebarComponent,
+    TopbarComponent,
+  ],
+  templateUrl: './agenda-medica-list.component.html',
 })
 export class AgendaMedicaListComponent implements OnInit {
-  private svc      = inject(AgendaMedicaService);
-  private medSvc   = inject(MedicoService);
-  private dialog   = inject(MatDialog);
-  private snack    = inject(MatSnackBar);
-  private fb       = inject(FormBuilder);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  columns = ["rowNum","idMedico","fecha","horaInicio","horaFin","esDisponible","idTblEstadoVigencia","acciones"];
-  data: AgendaMedicaItemsDto[] = [];
-  total = 0; pageSize = 10; loading = false;
-  medicos: CatalogoItem[] = [];
-
-  filtros = this.fb.group({ idMedico:[""], fecha:[""], fechaRegistroDesde:[""], fechaRegistroHasta:[""] });
-
-  ngOnInit() {
-    this.medSvc.listar({ pageSize:100, skip:0, sortField:"idMedico", sortDir:"asc", filter:{} as any }).subscribe(res => {
-      this.medicos = res.data.map(m => ({ value: m.idMedico, text: `CMP: ${m.cmp}` }));
+  cols = ['rowNum', 'fecha', 'horaInicio', 'horaFin', 'idTblEstadoVigencia', 'acciones'];
+  data: agendaMedicaItemsDto[] = [];
+  total = 0;
+  loading = false;
+  pageSize = 10;
+  medicos: catalogoItem[] = [];
+  estadosVigencia: catalogoItem[] = [];
+  filtros!: FormGroup;
+  constructor(
+    private svc: AgendaMedicaService,
+    private dialog: MatDialog,
+    private snack: MatSnackBar,
+    private fb: FormBuilder,
+    private cat: CatalogoService,
+  ) {}
+  ngOnInit(): void {
+    this.cat.getMedicos().subscribe((r) => (this.medicos = r));
+    this.cat.getEstadosVigencia().subscribe((r) => (this.estadosVigencia = r));
+    this.filtros = this.fb.group({
+      fecha: [''],
+      fechaRegistroDesde: [''],
+      fechaRegistroHasta: [''],
     });
     this.cargar();
   }
-
-  cargar(skip = 0) {
+  cargar(skip = 0): void {
     this.loading = true;
-    this.svc.listar({ pageSize:this.pageSize, skip, sortField:"fecha", sortDir:"asc", filter:this.filtros.value as AgendaMedicaFilter }).subscribe({
-      next: res => { this.data=res.data; this.total=res.count; this.loading=false; },
-      error: () => { this.loading=false; }
-    });
+    this.svc
+      .listar({
+        pageSize: this.pageSize,
+        skip,
+        sortField: 'Id',
+        sortDir: 'asc',
+        filter: this.filtros.value as any,
+      })
+      .subscribe({
+        next: (r) => {
+          this.data = r.data;
+          this.total = r.count;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
-
-  buscar() { this.paginator?.firstPage(); this.cargar(); }
-  limpiar() { this.filtros.reset(); this.buscar(); }
-  onPage(e: any) { this.pageSize=e.pageSize; this.cargar(e.pageIndex*e.pageSize); }
-  getMedico(id: number) { return this.medicos.find(m => m.value===id)?.text ?? `ID:${id}`; }
-
-  abrirForm(item?: AgendaMedicaItemsDto) {
-    const ref = this.dialog.open(AgendaMedicaFormDialogComponent, { width:"560px", data:{ item:item??null, medicos:this.medicos }, disableClose:true });
-    ref.afterClosed().subscribe(ok => { if(ok) this.cargar(); });
+  buscar(): void {
+    if (this.paginator) this.paginator.firstPage();
+    this.cargar(0);
   }
-
-  eliminar(item: AgendaMedicaItemsDto) {
-    const ref = this.dialog.open(ConfirmDialogComponent, { width:"380px", data:{title:"Eliminar Slot",message:`¿Eliminar slot del ${item.fecha}?`} });
-    ref.afterClosed().subscribe(ok => {
-      if(!ok) return;
-      this.svc.eliminar(item.idAgendaMedica.toString()).subscribe(() => { this.snack.open("Eliminado","Cerrar",{duration:3000}); this.cargar(); });
-    });
+  limpiar(): void {
+    this.filtros.reset();
+    this.buscar();
+  }
+  onPage(e: any): void {
+    this.pageSize = e.pageSize;
+    this.cargar(e.pageIndex * e.pageSize);
+  }
+  nuevo(): void {
+    this.dialog
+      .open(AgendaMedicaFormComponent, { width: '640px', data: null })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Creado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  editar(row: agendaMedicaItemsDto): void {
+    this.dialog
+      .open(AgendaMedicaFormComponent, { width: '640px', data: row })
+      .afterClosed()
+      .subscribe((r) => {
+        if (r) {
+          this.snack.open('Actualizado correctamente', '', { duration: 3000 });
+          this.cargar();
+        }
+      });
+  }
+  ver(row: agendaMedicaItemsDto): void {
+    this.dialog.open(AgendaMedicaDetalleComponent, { width: '580px', data: row });
+  }
+  eliminar(row: agendaMedicaItemsDto): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        width: '420px',
+        data: { title: 'Eliminar registro', message: 'Esta accion no se puede deshacer.' },
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok)
+          this.svc.eliminar((row as any).guid ?? '').subscribe(() => {
+            this.snack.open('Eliminado', '', { duration: 3000 });
+            this.cargar();
+          });
+      });
+  }
+  labelEstado(id: number): string {
+    return id === 1 ? 'Activo' : 'Inactivo';
+  }
+  chipEstado(id: number): string {
+    return id === 1 ? 'chip chip-ok' : 'chip chip-off';
   }
 }

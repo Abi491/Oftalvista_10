@@ -1,0 +1,39 @@
+<div class="premium-shell">
+  <app-sidebar></app-sidebar>
+  <div class="content-wrap">
+    <app-topbar title="Mi Panel" subtitle="Consulta tus citas, pagos y recordatorios"></app-topbar>
+    <div class="page-container">
+      <div class="hero">
+        <h2>Bienvenido a Oftalvista</h2>
+        <p>Accede a tus citas programadas, historial de atenciones y recordatorios desde aqui.</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card" style="background: linear-gradient(135deg, #1e3a8a, #2563eb)">
+          <h3>Proxima cita</h3>
+          <div class="value">Pendiente</div>
+        </div>
+        <div class="kpi-card" style="background: linear-gradient(135deg, #0f766e, #06b6d4)">
+          <h3>Pagos realizados</h3>
+          <div class="value">3</div>
+        </div>
+        <div class="kpi-card" style="background: linear-gradient(135deg, #7c3aed, #9333ea)">
+          <h3>Recordatorios</h3>
+          <div class="value">2</div>
+        </div>
+      </div>
+      <mat-card class="table-card">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap">
+          <a mat-flat-button color="primary" routerLink="/operaciones/citas" style="height: 50px"
+            ><mat-icon>event</mat-icon> Mis Citas</a
+          >
+          <a mat-stroked-button routerLink="/operaciones/historial" style="height: 50px"
+            ><mat-icon>history</mat-icon> Historial</a
+          >
+          <a mat-stroked-button routerLink="/operaciones/recordatorios" style="height: 50px"
+            ><mat-icon>notifications</mat-icon> Recordatorios</a
+          >
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

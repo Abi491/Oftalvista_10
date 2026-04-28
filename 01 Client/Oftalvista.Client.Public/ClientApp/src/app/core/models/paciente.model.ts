@@ -1,18 +1,10 @@
-export interface PacienteRequest {
-  guidPaciente?: string;
-  idUsuario: number;
-  fechaNacimiento: string | null;
-  sexo: string;
-  direccion: string;
-  contactoEmergencia: string;
-  telefonoEmergencia: string;
-}
-
-export interface PacienteItemsDto {
+import { paginatedItemsRequest } from './pagination.model';
+export interface pacienteItemsDto {
   rowNum?: number;
   idPaciente: number;
+  guid?: string;
   idUsuario: number;
-  fechaNacimiento: string | null;
+  fechaNacimiento?: string;
   sexo: string;
   direccion: string;
   contactoEmergencia: string;
@@ -20,9 +12,28 @@ export interface PacienteItemsDto {
   idTblEstadoVigencia: number;
   rowCount?: number;
 }
-
-export interface PacienteFilter {
-  idUsuario: string;
-  fechaRegistroDesde: string;
-  fechaRegistroHasta: string;
+export interface pacienteBusquedaRequest {
+  idUsuario?: string;
+  fechaRegistroDesde?: string;
+  fechaRegistroHasta?: string;
 }
+export interface createPacienteRequest {
+  idUsuario: number;
+  fechaNacimiento?: string;
+  sexo: string;
+  direccion: string;
+  contactoEmergencia: string;
+  telefonoEmergencia: string;
+  idTblEstadoVigencia: number;
+}
+export interface updatePacienteRequest {
+  guidPaciente: string;
+  idUsuario: number;
+  fechaNacimiento?: string;
+  sexo: string;
+  direccion: string;
+  contactoEmergencia: string;
+  telefonoEmergencia: string;
+  idTblEstadoVigencia: number;
+}
+export type pacienteListRequest = paginatedItemsRequest<pacienteBusquedaRequest>;

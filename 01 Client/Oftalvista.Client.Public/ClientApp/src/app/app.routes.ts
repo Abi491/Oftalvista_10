@@ -1,52 +1,94 @@
-import { Routes } from "@angular/router";
-import { authGuard } from "./core/guards/auth.guard";
-import { roleGuard } from "./core/guards/role.guard";
-
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
-  { path: "", redirectTo: "login", pathMatch: "full" },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
-    path: "login",
-    loadComponent: () => import("./modules/auth/login/login.component").then(m => m.LoginComponent)
+    path: 'login',
+    loadComponent: () =>
+      import('./modules/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: "dashboard",
+    path: 'dashboard/admin',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/dashboard/admin/dashboard-admin.component').then(
+        (m) => m.DashboardAdminComponent,
+      ),
+  },
+  {
+    path: 'dashboard/paciente',
     canActivate: [authGuard],
-    children: [
-      {
-        path: "admin",
-        canActivate: [roleGuard],
-        data: { roles: [1] },
-        loadComponent: () => import("./modules/dashboard/admin/dashboard-admin.component").then(m => m.DashboardAdminComponent)
-      },
-      {
-        path: "paciente",
-        canActivate: [roleGuard],
-        data: { roles: [2] },
-        loadComponent: () => import("./modules/dashboard/paciente/dashboard-paciente.component").then(m => m.DashboardPacienteComponent)
-      }
-    ]
+    loadComponent: () =>
+      import('./modules/dashboard/paciente/dashboard-paciente.component').then(
+        (m) => m.DashboardPacienteComponent,
+      ),
   },
   {
-    path: "mantenimiento",
-    canActivate: [authGuard, roleGuard],
-    data: { roles: [1] },
-    children: [
-      { path: "especialidades",  loadComponent: () => import("./modules/especialidad-medica/list/especialidad-list.component").then(m => m.EspecialidadListComponent) },
-      { path: "usuarios",        loadComponent: () => import("./modules/usuario/list/usuario-list.component").then(m => m.UsuarioListComponent) },
-      { path: "medicos",         loadComponent: () => import("./modules/medico/list/medico-list.component").then(m => m.MedicoListComponent) },
-      { path: "pacientes",       loadComponent: () => import("./modules/paciente/list/paciente-list.component").then(m => m.PacienteListComponent) },
-      { path: "agenda-medica",   loadComponent: () => import("./modules/agenda-medica/list/agenda-medica-list.component").then(m => m.AgendaMedicaListComponent) }
-    ]
+    path: 'mantenimiento/especialidades',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/especialidad-medica/list/especialidad-medica-list.component').then(
+        (m) => m.EspecialidadMedicaListComponent,
+      ),
   },
   {
-    path: "operaciones",
+    path: 'mantenimiento/usuarios',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/usuario/list/usuario-list.component').then((m) => m.UsuarioListComponent),
+  },
+  {
+    path: 'mantenimiento/medicos',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/medico/list/medico-list.component').then((m) => m.MedicoListComponent),
+  },
+  {
+    path: 'mantenimiento/pacientes',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/paciente/list/paciente-list.component').then(
+        (m) => m.PacienteListComponent,
+      ),
+  },
+  {
+    path: 'mantenimiento/agenda-medica',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/agenda-medica/list/agenda-medica-list.component').then(
+        (m) => m.AgendaMedicaListComponent,
+      ),
+  },
+  {
+    path: 'operaciones/citas',
     canActivate: [authGuard],
-    children: [
-      { path: "citas",           loadComponent: () => import("./modules/cita/list/cita-list.component").then(m => m.CitaListComponent) },
-      { path: "pagos",           loadComponent: () => import("./modules/pago-cita/list/pago-cita-list.component").then(m => m.PagoCitaListComponent) },
-      { path: "historial-citas", loadComponent: () => import("./modules/historial-cita/list/historial-cita-list.component").then(m => m.HistorialCitaListComponent) },
-      { path: "recordatorios",   loadComponent: () => import("./modules/recordatorio-cita/list/recordatorio-cita-list.component").then(m => m.RecordatorioCitaListComponent) }
-    ]
+    loadComponent: () =>
+      import('./modules/cita/list/cita-list.component').then((m) => m.CitaListComponent),
   },
-  { path: "**", redirectTo: "login" }
+  {
+    path: 'operaciones/pagos',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./modules/pago-cita/list/pago-cita-list.component').then(
+        (m) => m.PagoCitaListComponent,
+      ),
+  },
+  {
+    path: 'operaciones/historial',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modules/historial-cita/list/historial-cita-list.component').then(
+        (m) => m.HistorialCitaListComponent,
+      ),
+  },
+  {
+    path: 'operaciones/recordatorios',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modules/recordatorio-cita/list/recordatorio-cita-list.component').then(
+        (m) => m.RecordatorioCitaListComponent,
+      ),
+  },
+  { path: '**', redirectTo: 'login' },
 ];

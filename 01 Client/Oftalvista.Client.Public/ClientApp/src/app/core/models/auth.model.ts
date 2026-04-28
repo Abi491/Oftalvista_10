@@ -1,11 +1,13 @@
-export interface LoginRequest {
+export interface loginRequest {
   correo: string;
   claveHash: string;
 }
-
-export interface LoginResponse {
+export interface loginResponse {
   token: string;
-  nombreCompleto: string;
+  refreshToken?: string;
+  idUsuario: number;
+  nombres: string;
+  apellidos: string;
   idTipoUsuario: number;
-  correo: string;
+  tipoUsuario: string;
 }

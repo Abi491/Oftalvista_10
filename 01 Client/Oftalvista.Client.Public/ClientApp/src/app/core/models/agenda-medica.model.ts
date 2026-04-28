@@ -1,16 +1,8 @@
-export interface AgendaMedicaRequest {
-  guidAgendaMedica?: string;
-  idMedico: number;
-  fecha: string;
-  horaInicio: string;
-  horaFin: string;
-  esDisponible: boolean;
-  observacion: string;
-}
-
-export interface AgendaMedicaItemsDto {
+import { paginatedItemsRequest } from './pagination.model';
+export interface agendaMedicaItemsDto {
   rowNum?: number;
   idAgendaMedica: number;
+  guid?: string;
   idMedico: number;
   fecha: string;
   horaInicio: string;
@@ -20,10 +12,29 @@ export interface AgendaMedicaItemsDto {
   idTblEstadoVigencia: number;
   rowCount?: number;
 }
-
-export interface AgendaMedicaFilter {
-  idMedico: string;
-  fecha: string;
-  fechaRegistroDesde: string;
-  fechaRegistroHasta: string;
+export interface agendaMedicaBusquedaRequest {
+  idMedico?: string;
+  fecha?: string;
+  fechaRegistroDesde?: string;
+  fechaRegistroHasta?: string;
 }
+export interface createAgendaMedicaRequest {
+  idMedico: number;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  esDisponible: boolean;
+  observacion: string;
+  idTblEstadoVigencia: number;
+}
+export interface updateAgendaMedicaRequest {
+  guidAgendaMedica: string;
+  idMedico: number;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  esDisponible: boolean;
+  observacion: string;
+  idTblEstadoVigencia: number;
+}
+export type agendaMedicaListRequest = paginatedItemsRequest<agendaMedicaBusquedaRequest>;

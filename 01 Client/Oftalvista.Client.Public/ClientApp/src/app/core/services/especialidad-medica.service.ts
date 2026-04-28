@@ -1,40 +1,46 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { PaginatedRequest, PaginatedResponse } from "../models/paginated.model";
-import { EspecialidadMedicaRequest, EspecialidadMedicaItemsDto, EspecialidadMedicaFilter } from "../models/especialidad-medica.model";
-
-@Injectable({ providedIn: "root" })
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { paginatedItemsResponse } from '../models/pagination.model';
+import {
+  especialidadMedicaItemsDto,
+  createEspecialidadMedicaRequest,
+  updateEspecialidadMedicaRequest,
+  especialidadMedicaListRequest,
+} from '../models/especialidad-medica.model';
+@Injectable({ providedIn: 'root' })
 export class EspecialidadMedicaService {
-  private http = inject(HttpClient);
-  private url  = `${environment.apiUrl}/especialidad-medica`;
-
-  listar(request: PaginatedRequest<EspecialidadMedicaFilter>): Observable<PaginatedResponse<EspecialidadMedicaItemsDto>> {
-    let params = new HttpParams()
-      .set("pageSize",   request.pageSize)
-      .set("skip",       request.skip)
-      .set("sortField",  request.sortField)
-      .set("sortDir",    request.sortDir);
-    if (request.filter) {
-      Object.entries(request.filter).forEach(([k, v]) => { if (v) params = params.set(k, v as string); });
-    }
-    return this.http.get<PaginatedResponse<EspecialidadMedicaItemsDto>>(this.url, { params });
+  private url = `${environment.apiUrl}/especialidad-medica`;
+  constructor(private http: HttpClient) {}
+  listar(
+    req: especialidadMedicaListRequest,
+  ): Observable<paginatedItemsResponse<especialidadMedicaItemsDto>> {
+    let p = new HttpParams().set('pageSize', req.pageSize).set('skip', req.skip);
+    if (req.sortField) p = p.set('sortField', req.sortField);
+    if (req.sortDir) p = p.set('sortDir', req.sortDir);
+    if (req.filter)
+      Object.keys(req.filter).forEach((k) => {
+        const v = (req.filter as any)[k];
+        if (v != null && v !== '') p = p.set(k, v);
+      });
+    return this.http.get<paginatedItemsResponse<especialidadMedicaItemsDto>>(this.url, {
+      params: p,
+    });
   }
-
-  getById(guid: string): Observable<EspecialidadMedicaItemsDto> {
-    return this.http.get<EspecialidadMedicaItemsDto>(`${this.url}/${guid}`);
+  obtener(guid: string): Observable<especialidadMedicaItemsDto> {
+    return this.http.get<especialidadMedicaItemsDto>(`${this.url}/${guid}`);
   }
-
-  crear(payload: EspecialidadMedicaRequest): Observable<any> {
-    return this.http.post(this.url, payload);
+  crear(body: createEspecialidadMedicaRequest): Observable<especialidadMedicaItemsDto> {
+    return this.http.post<especialidadMedicaItemsDto>(this.url, body);
   }
-
-  editar(payload: EspecialidadMedicaRequest): Observable<any> {
-    return this.http.put(this.url, payload);
+  editar(
+    guid: string,
+    body: updateEspecialidadMedicaRequest,
+  ): Observable<especialidadMedicaItemsDto> {
+    return this.http.put<especialidadMedicaItemsDto>(`${this.url}/${guid}`, body);
   }
-
-  eliminar(guid: string): Observable<any> {
-    return this.http.delete(`${this.url}/${guid}`);
+  eliminar(guid: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${guid}`);
   }
 }
