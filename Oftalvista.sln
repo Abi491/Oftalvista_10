@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11612.150 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Services", "02 Services", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -12,6 +12,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Domain", "02 Services\Oftalvista\Oftalvista.Domain\Oftalvista.Domain.csproj", "{9DCB2585-1587-4018-8324-A4579461F2BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Infrastructure", "02 Services\Oftalvista\Oftalvista.Infrastructure\Oftalvista.Infrastructure.csproj", "{4351FE96-F995-4997-9A85-CC8999B6C401}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Transversal", "03 Transversal", "{13328D1A-5B1E-41FD-977F-2B8ADB7C7110}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B1EA3C04-CCB6-4A8F-B1BD-5A51D3D2920C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oftalvista.Core", "03 Transversal\Core\Oftalvista.Core\Oftalvista.Core.csproj", "{A855192A-94A2-4FBD-947A-2D19D1EC745B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +37,10 @@ Global
 		{4351FE96-F995-4997-9A85-CC8999B6C401}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4351FE96-F995-4997-9A85-CC8999B6C401}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4351FE96-F995-4997-9A85-CC8999B6C401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A855192A-94A2-4FBD-947A-2D19D1EC745B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A855192A-94A2-4FBD-947A-2D19D1EC745B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A855192A-94A2-4FBD-947A-2D19D1EC745B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A855192A-94A2-4FBD-947A-2D19D1EC745B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -40,6 +50,8 @@ Global
 		{D4155F75-DF64-4D20-A0F1-1CD9E6F7EDCC} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
 		{9DCB2585-1587-4018-8324-A4579461F2BE} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
 		{4351FE96-F995-4997-9A85-CC8999B6C401} = {97735E9C-B2B2-444F-8D7C-5879E3957736}
+		{B1EA3C04-CCB6-4A8F-B1BD-5A51D3D2920C} = {13328D1A-5B1E-41FD-977F-2B8ADB7C7110}
+		{A855192A-94A2-4FBD-947A-2D19D1EC745B} = {B1EA3C04-CCB6-4A8F-B1BD-5A51D3D2920C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B47D4D55-4421-4BFC-986B-6C88157BA76D}

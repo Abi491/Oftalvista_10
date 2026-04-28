@@ -24,10 +24,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Oftalvista.Domain\Oftalvista.Domain.csproj" />
 	  <ProjectReference Include="..\Oftalvista.Infrastructure\Oftalvista.Infrastructure.csproj" />
 	</ItemGroup>

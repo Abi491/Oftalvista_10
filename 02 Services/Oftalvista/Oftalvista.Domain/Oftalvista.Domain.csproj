@@ -11,8 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="AggregatesModel\" />
 		<Folder Include="Validations\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\03 Transversal\Core\Oftalvista.Core\Oftalvista.Core.csproj" />
 	</ItemGroup>
 
 </Project>
