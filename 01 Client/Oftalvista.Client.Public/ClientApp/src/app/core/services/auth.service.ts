@@ -20,7 +20,8 @@ export class AuthService {
     );
   }
   logout(): void {
-    localStorage.clear();
+    localStorage.removeItem('ov_token');
+    localStorage.removeItem('ov_user');
     this.router.navigate(['/login']);
   }
   getToken(): string | null {

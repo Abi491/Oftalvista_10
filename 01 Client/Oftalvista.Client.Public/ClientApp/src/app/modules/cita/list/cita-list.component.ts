@@ -9,8 +9,10 @@ import { MaterialModule } from '../../../shared/material.module';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { TopbarComponent } from '../../../shared/components/topbar/topbar.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../../core/services/auth.service';
 import { CatalogoService } from '../../../core/services/catalogo.service';
 import { CitaService } from '../../../core/services/cita.service';
+import { UserScopeService } from '../../../core/services/user-scope.service';
 import { catalogoItem } from '../../../core/models/catalogo.model';
 import { citaItemsDto, citaListRequest } from '../../../core/models/cita.model';
 import { CitaFormComponent } from '../dialogs/form/cita-form.component';
@@ -41,21 +43,37 @@ export class CitaListComponent implements OnInit {
   modalidades: catalogoItem[] = [];
   estadosVigencia: catalogoItem[] = [];
   filtros!: FormGroup;
+  currentPacienteId: number | null = null;
   constructor(
     private svc: CitaService,
     private dialog: MatDialog,
     private snack: MatSnackBar,
     private fb: FormBuilder,
     private cat: CatalogoService,
+    private auth: AuthService,
+    private userScope: UserScopeService,
   ) {}
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
   ngOnInit(): void {
-    this.cat.getPacientes().subscribe((r) => (this.pacientes = r));
+    if (this.isAdmin) this.cat.getPacientes().subscribe((r) => (this.pacientes = r));
     this.cat.getMedicos().subscribe((r) => (this.medicos = r));
     this.cat.getEstadosCita().subscribe((r) => (this.estadosCita = r));
     this.cat.getModalidadesCita().subscribe((r) => (this.modalidades = r));
     this.cat.getEstadosVigencia().subscribe((r) => (this.estadosVigencia = r));
     this.filtros = this.fb.group({ fechaRegistroDesde: [''], fechaRegistroHasta: [''] });
-    this.cargar();
+    this.inicializarContexto();
+  }
+  inicializarContexto(): void {
+    if (this.isAdmin) {
+      this.cargar();
+      return;
+    }
+    this.userScope.getCurrentPaciente().subscribe((paciente) => {
+      this.currentPacienteId = paciente?.idPaciente ?? null;
+      this.cargar();
+    });
   }
   cargar(skip = 0): void {
     this.loading = true;
@@ -65,7 +83,7 @@ export class CitaListComponent implements OnInit {
         skip,
         sortField: 'Id',
         sortDir: 'asc',
-        filter: this.filtros.value as any,
+        filter: this.buildFilter(),
       })
       .subscribe({
         next: (r) => {
@@ -77,6 +95,11 @@ export class CitaListComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+  buildFilter(): any {
+    const filter = { ...(this.filtros.value as any) };
+    if (!this.isAdmin && this.currentPacienteId) filter.idPaciente = String(this.currentPacienteId);
+    return filter;
   }
   buscar(): void {
     if (this.paginator) this.paginator.firstPage();
@@ -102,6 +125,7 @@ export class CitaListComponent implements OnInit {
       });
   }
   editar(row: citaItemsDto): void {
+    if (!this.isAdmin) return;
     this.dialog
       .open(CitaFormComponent, { width: '640px', data: row })
       .afterClosed()
@@ -116,6 +140,7 @@ export class CitaListComponent implements OnInit {
     this.dialog.open(CitaDetalleComponent, { width: '580px', data: row });
   }
   eliminar(row: citaItemsDto): void {
+    if (!this.isAdmin) return;
     this.dialog
       .open(ConfirmDialogComponent, {
         width: '420px',

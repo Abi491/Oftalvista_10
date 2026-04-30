@@ -7,8 +7,21 @@
         <div class="action-bar">
           <h2>Listado</h2>
           <button mat-flat-button color="primary" (click)="nuevo()">
-            <mat-icon>add</mat-icon> Nuevo
+            <mat-icon>add</mat-icon> {{ isAdmin ? 'Nuevo' : 'Registrar Cita' }}
           </button>
+        </div>
+        <div
+          *ngIf="!isAdmin"
+          style="
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(31, 102, 255, 0.05);
+            color: #425466;
+            font-size: 12px;
+          "
+        >
+          Puede registrar y consultar sus citas. Los cambios de estado y cierre de atencion son gestionados por administracion.
         </div>
         <div class="filter-row">
           <mat-form-field appearance="outline">
@@ -61,10 +74,22 @@
                 <button mat-icon-button matTooltip="Ver" (click)="ver(r)">
                   <mat-icon>visibility</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Editar" color="primary" (click)="editar(r)">
+                <button
+                  *ngIf="isAdmin"
+                  mat-icon-button
+                  matTooltip="Editar"
+                  color="primary"
+                  (click)="editar(r)"
+                >
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar(r)">
+                <button
+                  *ngIf="isAdmin"
+                  mat-icon-button
+                  matTooltip="Eliminar"
+                  color="warn"
+                  (click)="eliminar(r)"
+                >
                   <mat-icon>delete_outline</mat-icon>
                 </button>
               </td>
